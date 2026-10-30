@@ -1,0 +1,62 @@
+// SPDX-License-Identifier: Apache-2.0
+
+plugins {
+    id 'java'
+}
+
+group 'jp.co.lycorp.jlp.jmorph.cli'
+
+// LIBとバージョンを揃えるため、対応するLIBプロジェクトのバージョンを参照
+evaluationDependsOn(':jmorph:jmorph-lib')
+version = project(':jmorph:jmorph-lib').version
+
+def publishTarget = providers.gradleProperty('publishTarget')
+        .getOrElse('none')
+
+switch (publishTarget) {
+    case 'central':
+        apply from: 'publishing-central.gradle'
+        break
+    case 'internal':
+    case 'none':
+        // The CLI is not published to the internal repository.
+        break
+    default:
+        throw new GradleException(
+                "Unknown publishTarget: ${publishTarget}")
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.release = 11
+}
+
+tasks.withType(Javadoc).configureEach {
+    options.encoding = 'UTF-8'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation project(':jmorph:jmorph-lib')
+
+    testImplementation platform('org.junit:junit-bom:5.13.4')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+jar {
+    manifest {
+        attributes "Main-Class": "jp.co.lycorp.jlp.jmorph.cli.JMorphAnalyzerJsonrpcSample"
+    }
+}

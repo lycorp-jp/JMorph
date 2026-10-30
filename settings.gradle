@@ -1,0 +1,24 @@
+// SPDX-License-Identifier: Apache-2.0
+
+rootProject.name = 'jmorph'
+
+def baseDirs = ['jmorph']
+
+def toProjectPath = { File dir ->
+    ':' + rootDir.toPath()
+                 .relativize(dir.toPath())
+                 .toString()
+                 .replace(File.separator, ':')
+}
+
+def candidates = [] as Set<File>
+baseDirs.each { base ->
+    candidates += fileTree(dir: base,
+        includes: ['**/build.gradle'],
+        excludes: ['**/build/**', '**/.gradle/**', '**/buildSrc/**']
+    ).files.collect { it.parentFile }
+}
+
+candidates.each { dir ->
+    include toProjectPath(dir)
+}

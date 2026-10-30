@@ -1,0 +1,18 @@
+// SPDX-License-Identifier: Apache-2.0
+
+package jp.co.lycorp.jlp.jmorph;
+
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
+@JsonSubTypes({
+        @JsonSubTypes.Type(value = UserDicInRequestProviderBasicConfig.class, name = "basic")
+})
+public interface UserDicInRequestProviderConfig {
+    static UserDicInRequestProviderConfig defaultConfig() {
+        return UserDicInRequestProviderBasicConfig.defaultConfig();
+    }
+
+    String getType();
+}

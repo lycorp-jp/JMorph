@@ -1,0 +1,9 @@
+JMorph
+Copyright 2026 LY Corporation
+
+
+This product includes software derived from MeCab's Darts (Double-Array Trie System).
+
+Copyright (c) 2001-2008, Taku Kudo
+Copyright (c) 2004-2008, Nippon Telegraph and Telephone Corporation
+https://github.com/taku910/mecab/blob/master/mecab/src/darts.h

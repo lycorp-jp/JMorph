@@ -1,0 +1,53 @@
+// SPDX-License-Identifier: Apache-2.0
+
+apply plugin: 'maven-publish'
+
+java {
+    withSourcesJar()
+    withJavadocJar()
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+
+            pom {
+                name = 'JMorph CLI'
+                description = 'Applications and examples for JMorph.'
+                url = 'https://github.com/lycorp-jp/JMorph'
+
+                licenses {
+                    license {
+                        name = 'Apache License, Version 2.0'
+                        url = 'https://www.apache.org/licenses/LICENSE-2.0.txt'
+                        distribution = 'repo'
+                    }
+                }
+
+                developers {
+                    developer {
+                        name = 'LY Corporation'
+                        url = 'https://www.lycorp.co.jp/'
+                    }
+                }
+
+                scm {
+                    url = 'https://github.com/lycorp-jp/JMorph'
+                    connection = 'scm:git:https://github.com/lycorp-jp/JMorph.git'
+                    developerConnection = 'scm:git:ssh://git@github.com/lycorp-jp/JMorph.git'
+                }
+            }
+        }
+    }
+    repositories {
+        maven {
+            name = 'central'
+            url = uri(providers.gradleProperty('mavenCentralRepositoryUrl').get())
+            credentials {
+                username = providers.gradleProperty('mavenCentralUsername').get()
+                password = providers.gradleProperty('mavenCentralPassword').get()
+            }
+        }
+    }
+}

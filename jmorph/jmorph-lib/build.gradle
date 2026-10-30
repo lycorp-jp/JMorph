@@ -1,0 +1,98 @@
+// SPDX-License-Identifier: Apache-2.0
+
+plugins {
+    id 'java-library'
+    id 'jacoco'
+    id 'com.gradleup.shadow' version '9.6.1'
+}
+
+components.java.withVariantsFromConfiguration(configurations.shadowRuntimeElements) {
+    skip()
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.release = 11
+}
+
+tasks.withType(Javadoc).configureEach {
+    options.encoding = 'UTF-8'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation platform('org.junit:junit-bom:5.13.4')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testImplementation 'org.mockito:mockito-core:5.23.0'
+    testImplementation 'org.mockito:mockito-junit-jupiter:5.23.0'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    api 'org.apache.commons:commons-pool2:2.13.1'
+    api 'com.fasterxml.jackson.core:jackson-core:2.21.7'
+    api 'com.fasterxml.jackson.core:jackson-databind:2.21.7'
+    api 'com.fasterxml.jackson.core:jackson-annotations:2.21'
+    implementation 'com.fasterxml.jackson.module:jackson-module-afterburner:2.21.7'
+}
+
+tasks.named('processResources') {
+    from(rootProject.file('LICENSE')) {
+        into 'META-INF'
+    }
+    from(rootProject.file('NOTICE')) {
+        into 'META-INF'
+    }
+    from(rootProject.file('THIRD_PARTY_LICENSES/MeCab-BSD-3-Clause.txt')) {
+        into 'META-INF/licenses'
+    }
+}
+
+test {
+    useJUnitPlatform()
+    testLogging {
+        showStandardStreams true
+        events 'started', 'skipped', 'passed', 'failed'
+        exceptionFormat 'full'
+    }
+    maxHeapSize = "1024m" // maximum heap size
+}
+
+jacoco {
+    toolVersion = "0.8.11"
+}
+
+jacocoTestReport {
+    dependsOn test
+    reports {
+        xml.required = true
+        html.required = true
+        csv.required = false
+    }
+}
+
+group 'jp.co.lycorp.jlp.jmorph'
+version = '1.0.0'
+
+def publishTarget = providers.gradleProperty('publishTarget')
+        .getOrElse('none')
+
+switch (publishTarget) {
+    case 'internal':
+        apply from: 'publishing-internal.gradle'
+        break
+    case 'central':
+        apply from: 'publishing-central.gradle'
+        break
+    case 'none':
+        // Do not configure a publication repository by default.
+        break
+    default:
+        throw new GradleException(
+                "Unknown publishTarget: ${publishTarget}")
+}

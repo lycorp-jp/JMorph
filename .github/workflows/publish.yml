@@ -1,0 +1,44 @@
+name: Publish
+
+on:
+  workflow_dispatch:
+    inputs:
+      type:
+        description: "Publish type"
+        required: true
+        type: choice
+        options:
+          - snapshot
+          - production
+
+jobs:
+  publish:
+    name: Release build and publish
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.type }}
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+          cache: gradle
+
+      - name: Publish to Maven Central
+        run: |
+          ./gradlew \
+            -PpublishTarget=central \
+            :jmorph:jmorph-lib:publishMavenJavaPublicationToCentralRepository \
+            :jmorph:jmorph-cli:publishMavenJavaPublicationToCentralRepository
+        env:
+          RELEASE_PUBLISH: ${{ inputs.type == 'production' }}
+          ORG_GRADLE_PROJECT_mavenCentralRepositoryUrl: ${{ vars.MAVEN_CENTRAL_REPOSITORY_URL }}
+          ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
+          ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
+          ORG_GRADLE_PROJECT_signingKeyId: ${{ secrets.SIGNING_KEY_ID }}
+          ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.SIGNING_PASSWORD }}
+          ORG_GRADLE_PROJECT_signingKey: ${{ secrets.GPG_KEY_CONTENTS }}

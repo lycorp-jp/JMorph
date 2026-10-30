@@ -1,0 +1,23 @@
+{
+  "description": "sample JMorph config",
+
+  "analyzer": {
+    "dictionary": {
+      "baseDic": {
+        "type": "mecab",
+        "location": "./src/test/resources/mecab-small-dic/final"
+      },
+      "additionalDic": [],
+      "unknownDic": {
+        "type": "basic",
+        "concatMode": "ALL_EXCEPT_KATAKANA"
+      }
+    },
+    "outputMode": "ALL"
+  },
+
+  "jsonrpc": {
+    "method": "jmorph.tokenize",
+    "maxObject": 16
+  }
+}
