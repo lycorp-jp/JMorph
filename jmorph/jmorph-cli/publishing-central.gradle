@@ -1,53 +1,51 @@
 // SPDX-License-Identifier: Apache-2.0
 
-apply plugin: 'maven-publish'
+import com.vanniktech.maven.publish.JavaLibrary
+import com.vanniktech.maven.publish.JavadocJar
+import com.vanniktech.maven.publish.MavenPublishPlugin
 
-java {
-    withSourcesJar()
-    withJavadocJar()
+buildscript {
+    repositories {
+        gradlePluginPortal()
+    }
+    dependencies {
+        classpath 'com.vanniktech:gradle-maven-publish-plugin:0.34.0'
+    }
 }
 
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            from components.java
+apply plugin: MavenPublishPlugin
 
-            pom {
-                name = 'JMorph CLI'
-                description = 'Applications and examples for JMorph.'
-                url = 'https://github.com/lycorp-jp/JMorph'
+mavenPublishing {
+    configure(new JavaLibrary(new JavadocJar.Javadoc(), true))
+    publishToMavenCentral(true)
+    signAllPublications()
 
-                licenses {
-                    license {
-                        name = 'Apache License, Version 2.0'
-                        url = 'https://www.apache.org/licenses/LICENSE-2.0.txt'
-                        distribution = 'repo'
-                    }
-                }
+    coordinates(project.group.toString(), project.name, project.version.toString())
 
-                developers {
-                    developer {
-                        name = 'LY Corporation'
-                        url = 'https://www.lycorp.co.jp/'
-                    }
-                }
+    pom {
+        name = 'JMorph CLI'
+        description = 'Applications and examples for JMorph.'
+        url = 'https://github.com/lycorp-jp/JMorph'
 
-                scm {
-                    url = 'https://github.com/lycorp-jp/JMorph'
-                    connection = 'scm:git:https://github.com/lycorp-jp/JMorph.git'
-                    developerConnection = 'scm:git:ssh://git@github.com/lycorp-jp/JMorph.git'
-                }
+        licenses {
+            license {
+                name = 'Apache License, Version 2.0'
+                url = 'https://www.apache.org/licenses/LICENSE-2.0.txt'
+                distribution = 'repo'
             }
         }
-    }
-    repositories {
-        maven {
-            name = 'central'
-            url = uri(providers.gradleProperty('mavenCentralRepositoryUrl').get())
-            credentials {
-                username = providers.gradleProperty('mavenCentralUsername').get()
-                password = providers.gradleProperty('mavenCentralPassword').get()
+
+        developers {
+            developer {
+                name = 'LY Corporation'
+                url = 'https://www.lycorp.co.jp/'
             }
+        }
+
+        scm {
+            url = 'https://github.com/lycorp-jp/JMorph'
+            connection = 'scm:git:https://github.com/lycorp-jp/JMorph.git'
+            developerConnection = 'scm:git:ssh://git@github.com/lycorp-jp/JMorph.git'
         }
     }
 }
