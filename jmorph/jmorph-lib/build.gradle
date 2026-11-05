@@ -35,10 +35,10 @@ dependencies {
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
     api 'org.apache.commons:commons-pool2:2.13.1'
-    api 'com.fasterxml.jackson.core:jackson-core:2.21.7'
-    api 'com.fasterxml.jackson.core:jackson-databind:2.21.7'
+    api 'com.fasterxml.jackson.core:jackson-core:2.21.8'
+    api 'com.fasterxml.jackson.core:jackson-databind:2.21.8'
     api 'com.fasterxml.jackson.core:jackson-annotations:2.21'
-    implementation 'com.fasterxml.jackson.module:jackson-module-afterburner:2.21.7'
+    implementation 'com.fasterxml.jackson.module:jackson-module-afterburner:2.21.8'
 }
 
 tasks.named('processResources') {
